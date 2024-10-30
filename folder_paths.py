@@ -31,7 +31,7 @@ folder_names_and_paths["gligen"] = ([os.path.join(models_dir, "gligen")], suppor
 
 folder_names_and_paths["upscale_models"] = ([os.path.join(models_dir, "upscale_models")], supported_pt_extensions)
 
-folder_names_and_paths["custom_nodes"] = ([os.path.join(base_path, "custom_nodes"), os.path.join(base_path, "user_custom_nodes")], set())
+folder_names_and_paths["custom_nodes"] = ([os.path.join(base_path, "custom_nodes"), os.path.join(base_path, "custom_nodes_salt")], set())
 
 folder_names_and_paths["hypernetworks"] = ([os.path.join(models_dir, "hypernetworks")], supported_pt_extensions)
 
