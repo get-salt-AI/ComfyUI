@@ -1949,8 +1949,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     # Image
     "SaveImage": "Save Image",
     "PreviewImage": "Preview Image",
-    "LoadImage": "Load Image",
-    "LoadImageMask": "Load Image (as Mask)",
+    "LoadImage": "Image",
+    "LoadImageMask": "Image Mask",
     # "ImageScale": "Upscale Image",
     # "ImageScaleBy": "Upscale Image By",
     # "ImageUpscaleWithModel": "Upscale Image (using Model)",
