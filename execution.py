@@ -397,7 +397,8 @@ def execute(server, dynprompt, caches, current_item, extra_data, executed, promp
             "exception_message": str(ex),
             "exception_type": exception_type,
             "traceback": traceback.format_tb(tb),
-            "current_inputs": input_data_formatted
+            # Commented out to avoid sending the entire input data to the frontend
+            # "current_inputs": input_data_formatted
         }
         if isinstance(ex, comfy.model_management.OOM_EXCEPTION):
             logging.error("Got an OOM, unloading all loaded models.")
