@@ -383,11 +383,11 @@ def execute(server, dynprompt, caches, current_item, extra_data, executed, promp
     except Exception as ex:
         typ, _, tb = sys.exc_info()
         exception_type = full_type_name(typ)
-        input_data_formatted = {}
-        if input_data_all is not None:
-            input_data_formatted = {}
-            for name, inputs in input_data_all.items():
-                input_data_formatted[name] = [format_value(x) for x in inputs]
+        # input_data_formatted = {}
+        # if input_data_all is not None:
+        #     input_data_formatted = {}
+        #     for name, inputs in input_data_all.items():
+        #         input_data_formatted[name] = [format_value(x) for x in inputs]
 
         logging.error(f"!!! Exception during processing !!! {ex}")
         logging.error(traceback.format_exc())
@@ -453,7 +453,7 @@ class PromptExecutor:
                 "exception_message": error["exception_message"],
                 "exception_type": error["exception_type"],
                 "traceback": error["traceback"],
-                "current_inputs": error["current_inputs"],
+                # "current_inputs": error["current_inputs"],
                 "current_outputs": list(current_outputs),
             }
             self.add_message("execution_error", mes, broadcast=False)
