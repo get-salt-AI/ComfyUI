@@ -252,7 +252,7 @@ def execute(server, dynprompt, caches, current_item, extra_data, executed, promp
     if caches.outputs.get(unique_id) is not None:
         if server.client_id is not None:
             cached_output = caches.ui.get(unique_id) or {}
-            server.send_sync("executed", { "node": unique_id, "display_node": display_node_id, "output": cached_output.get("output",None), "prompt_id": prompt_id }, server.client_id)
+            server.send_sync("executed", { "node": unique_id, "display_node": display_node_id, "output": cached_output.get("output",None), "prompt_id": prompt_id, "timestamp": int(time.time() * 1000) }, server.client_id)
         return (ExecutionResult.SUCCESS, None, None)
 
     input_data_all = None
@@ -282,7 +282,7 @@ def execute(server, dynprompt, caches, current_item, extra_data, executed, promp
             input_data_all, missing_keys = get_input_data(inputs, class_def, unique_id, caches.outputs, dynprompt, extra_data)
             if server.client_id is not None:
                 server.last_node_id = display_node_id
-                server.send_sync("executing", { "node": unique_id, "display_node": display_node_id, "prompt_id": prompt_id }, server.client_id)
+                server.send_sync("executing", { "node": unique_id, "display_node": display_node_id, "prompt_id": prompt_id, "timestamp": int(time.time() * 1000) }, server.client_id)
 
             obj = caches.objects.get(unique_id)
             if obj is None:
@@ -307,7 +307,7 @@ def execute(server, dynprompt, caches, current_item, extra_data, executed, promp
                         "node_id": unique_id,
                         "node_type": class_type,
                         "executed": list(executed),
-
+                        "timestamp": int(time.time() * 1000),
                         "exception_message": f"Execution Blocked: {block.message}",
                         "exception_type": "ExecutionBlocked",
                         "traceback": [],
@@ -321,6 +321,8 @@ def execute(server, dynprompt, caches, current_item, extra_data, executed, promp
             def pre_execute_cb(call_index):
                 GraphBuilder.set_default_prefix(unique_id, call_index, 0)
             output_data, output_ui, has_subgraph = get_output_data(obj, input_data_all, execution_block_cb=execution_block_cb, pre_execute_cb=pre_execute_cb)
+        
+        logData = { "node": unique_id, "display_node": display_node_id, "prompt_id": prompt_id, "timestamp": int(time.time() * 1000) }
         if len(output_ui) > 0:
             caches.ui.set(unique_id, {
                 "meta": {
@@ -331,8 +333,11 @@ def execute(server, dynprompt, caches, current_item, extra_data, executed, promp
                 },
                 "output": output_ui
             })
-            if server.client_id is not None:
-                server.send_sync("executed", { "node": unique_id, "display_node": display_node_id, "output": output_ui, "prompt_id": prompt_id }, server.client_id)
+            logData["output"] = output_ui
+                
+        if server.client_id is not None:
+            server.send_sync("executed", logData, server.client_id)
+
         if has_subgraph:
             cached_outputs = []
             new_node_ids = []
@@ -467,7 +472,7 @@ class PromptExecutor:
             self.server.client_id = None
 
         self.status_messages = []
-        self.add_message("execution_start", { "prompt_id": prompt_id}, broadcast=False)
+        self.add_message("execution_start", { "prompt_id": prompt_id }, broadcast=False)
 
         with torch.inference_mode():
             dynamic_prompt = DynamicPrompt(prompt)
