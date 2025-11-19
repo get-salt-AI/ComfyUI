@@ -530,9 +530,17 @@ class PromptServer():
             info = {}
             info['input'] = obj_class.INPUT_TYPES()
             info['input_order'] = {key: list(value.keys()) for (key, value) in obj_class.INPUT_TYPES().items()}
-            info['output'] = obj_class.RETURN_TYPES
-            info['output_is_list'] = obj_class.OUTPUT_IS_LIST if hasattr(obj_class, 'OUTPUT_IS_LIST') else [False] * len(obj_class.RETURN_TYPES)
-            info['output_name'] = obj_class.RETURN_NAMES if hasattr(obj_class, 'RETURN_NAMES') else info['output']
+            info['output'] = obj_class.RETURN_TYPES() if callable(obj_class.RETURN_TYPES) else obj_class.RETURN_TYPES
+            
+            info['output_is_list'] = [False] * len(info['output'])
+            if hasattr(obj_class, 'OUTPUT_IS_LIST'):
+                info['output_is_list'] = obj_class.OUTPUT_IS_LIST() if callable(obj_class.OUTPUT_IS_LIST) else obj_class.OUTPUT_IS_LIST
+            
+            
+            info['output_name'] = info['output']
+            if hasattr(obj_class, 'RETURN_NAMES'):
+                info['output_name'] = obj_class.RETURN_NAMES() if callable(obj_class.RETURN_NAMES) else obj_class.RETURN_NAMES
+            
             info['name'] = node_class
             info['display_name'] = nodes.NODE_DISPLAY_NAME_MAPPINGS[node_class] if node_class in nodes.NODE_DISPLAY_NAME_MAPPINGS.keys() else node_class
             info['description'] = obj_class.DESCRIPTION if hasattr(obj_class,'DESCRIPTION') else ''
@@ -547,7 +555,7 @@ class PromptServer():
                 info['category'] = obj_class.CATEGORY
 
             if hasattr(obj_class, 'OUTPUT_TOOLTIPS'):
-                info['output_tooltips'] = obj_class.OUTPUT_TOOLTIPS
+                info['output_tooltips'] = obj_class.OUTPUT_TOOLTIPS() if callable(obj_class.OUTPUT_TOOLTIPS) else obj_class.OUTPUT_TOOLTIPS
 
             if getattr(obj_class, "DEPRECATED", False):
                 info['deprecated'] = True
