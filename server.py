@@ -546,6 +546,7 @@ class PromptServer():
             info['description'] = obj_class.DESCRIPTION if hasattr(obj_class,'DESCRIPTION') else ''
             info['python_module'] = getattr(obj_class, "RELATIVE_PYTHON_MODULE", "nodes")
             info['category'] = 'sd'
+            info['required_engine'] = obj_class.REQUIRED_ENGINE if hasattr(obj_class, 'REQUIRED_ENGINE') else None
             if hasattr(obj_class, 'OUTPUT_NODE') and obj_class.OUTPUT_NODE == True:
                 info['output_node'] = True
             else:
