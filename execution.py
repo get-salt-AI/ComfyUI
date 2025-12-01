@@ -783,6 +783,15 @@ def validate_prompt(prompt):
                 "extra_info": {}
             }
             return (False, error, [], [])
+        
+        if hasattr(class_, 'REQUIRED_ENGINE') and class_.REQUIRED_ENGINE and class_.REQUIRED_ENGINE != 'comfyui':
+            error = {
+                "type": "invalid_prompt",
+                "message": f"Cannot execute because node {class_type} requires the {class_.REQUIRED_ENGINE} engine.",
+                "details": f"Node ID '#{x}'",
+                "extra_info": {"node_id": x},
+            }
+            return (False, error, [], [])
 
         if hasattr(class_, 'OUTPUT_NODE') and class_.OUTPUT_NODE is True:
             outputs.add(x)
